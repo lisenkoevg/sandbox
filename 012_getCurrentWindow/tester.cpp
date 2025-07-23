@@ -9,7 +9,7 @@ using std::ofstream;
 using std::cout;
 using std::endl;
 
-int main(int argc, char **argv) {
+int main() {
   ofstream logFile("main.log");
   for (;;) {
     OpenEntityReaderEx();

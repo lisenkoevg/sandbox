@@ -85,10 +85,10 @@ HWND ExtractEntityEx() {
       SysFreeString(className);
       rootElem = curElem;
     }
-    wcout << endl;
+    wprintf(L"\n");
   } while (curElem);
 
-  wcout << endl;
+  wprintf(L"\n");
 
   return hf;
 }
@@ -98,7 +98,7 @@ void traverse(IUIAutomationTreeWalker *walker, IUIAutomationElement *curElem) {
 
   const int indent = 3;
   wchar_t fmt[30];
-  swprintf_s(fmt, 30, L"%% %dls%%0x%%08x", pad);
+  swprintf(fmt, 30, L"%% %dls%%0x%%08x", pad);
 
   BSTR name;
   HRESULT hr = S_OK;
@@ -106,25 +106,43 @@ void traverse(IUIAutomationTreeWalker *walker, IUIAutomationElement *curElem) {
   if (!curElem)
     return;
 
+  wprintf(fmt, "", curElem);
+
+  // controlType
+  CONTROLTYPEID controlType;
+  hr = curElem->get_CurrentControlType(&controlType);
+  if (FAILED(hr)) {
+    wprintf(L"get_CurrentControlType failed, HR: 0x%08x\n", hr);
+    exit(1);
+  }
+  wprintf(L" ct:%d", controlType);
+
+  // className
+  BSTR className;
+  hr = curElem->get_CurrentClassName(&className);
+  if (FAILED(hr)) {
+    wprintf(L"get_CurrentClassName failed, HR: 0x%08x\n", hr);
+    exit(1);
+  }
+  wprintf(L" cl:%ls", className);
+  SysFreeString(className);
+
+  // Name
   hr = curElem->get_CurrentName(&name);
   if (FAILED(hr)) {
     wprintf(L"get_CurrentName failed, HR: 0x%08x\n", hr);
     exit(1);
   }
-  wprintf(fmt, "", curElem);
-
-//   std::wstring nameW(name, SysStringLen(name));
-//   clang-format off
-//   std::replace_if(
-//       nameW.begin(),
-//       nameW.end(),
-//       [](auto ch) { return ch == '\n' || ch == '\r'; },
-//       '_'
-//   );
-//   clang-format on
-
-  std::wcout << " " << name << endl;
+  std::wstring nameW(name, SysStringLen(name));
   SysFreeString(name);
+  //   clang-format off
+  std::replace_if(
+      nameW.begin(), nameW.end(),
+      [](auto ch) { return ch == '\n' || ch == '\r'; }, '_');
+  //   clang-format on
+  wprintf(L" nm:%ls", nameW.data());
+
+  wprintf(L"\n");
 
   hr = walker->GetFirstChildElement(curElem, &next);
   if (FAILED(hr)) {
@@ -148,4 +166,5 @@ void traverse(IUIAutomationTreeWalker *walker, IUIAutomationElement *curElem) {
   } else {
     wprintf(L"\n");
   }
+  std::flush(std::cout);
 }
