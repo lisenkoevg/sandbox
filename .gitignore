@@ -2,7 +2,7 @@
 tmp
 002_qmake_test/debug
 002_qmake_test/release
-Makefile
+#Makefile
 Makefile.Debug
 Makefile.Release
 .qmake.stash
