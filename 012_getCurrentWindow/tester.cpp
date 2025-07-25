@@ -5,9 +5,9 @@
 
 #include "sudet.hpp"
 
-using std::ofstream;
 using std::cout;
 using std::endl;
+using std::ofstream;
 
 int main() {
   ofstream logFile("main.log");

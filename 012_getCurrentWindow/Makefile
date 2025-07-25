@@ -9,3 +9,6 @@ tester: tester.cpp
 
 $(lib): sudet.cpp sudet.hpp
 	g++ $(CXXFLAGS) -shared -fPIC $< -o $@ -lole32 -loleaut32
+
+clean:
+	rm -f *.exe *.dll
